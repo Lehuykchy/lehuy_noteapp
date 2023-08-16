@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/lnabc">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:id="@+id/lnexitcreatenote"
+                    android:layout_alignParentLeft="true">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/baseline_arrow_back_ios_24"/>
+                    <TextView
+                        android:id="@+id/tvnamefolderexit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Tất cả"
+                        android:textColor="#81A34D"
+                        android:gravity="center_vertical"
+                        android:textSize="20dp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvfinshedcreatenote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xong"
+                    android:textColor="#81A34D"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:visibility="visible"/>
+
+                <ImageView
+                    android:id="@+id/imgmorecreatenote"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/more"
+                    android:layout_toLeftOf="@id/tvfinshedcreatenote"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"/>
+
+
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarcratenote"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:visibility="gone"
+            android:animateLayoutChanges="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/radius12stroke">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/action_heading"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3.5"
+                    android:layout_margin="2dp"
+                    android:background="@color/white"
+                    android:contentDescription="@null"
+                    android:src="@drawable/heading" />
+                <ImageButton
+                    android:id="@+id/action_bold"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:background="@color/white"
+                    android:contentDescription="@null"
+                    android:src="@drawable/boldtext"/>
+                <ImageButton
+                    android:id="@+id/action_italic"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:background="@color/white"
+                    android:contentDescription="@null"
+                    android:src="@drawable/italic"/>
+                <ImageButton
+                    android:id="@+id/action_underline"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:background="@color/white"
+                    android:contentDescription="@null"
+                    android:src="@drawable/underline"/>
+                <ImageButton
+                    android:id="@+id/action_insert_bullets"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:background="@color/white"
+                    android:contentDescription="@null"
+                    android:src="@drawable/list" />
+                <ImageButton
+                    android:id="@+id/action_insert_numbers"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:background="@color/white"
+                    android:contentDescription="@null"
+                    android:src="@drawable/listnumber" />
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"/>
+
+
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/lnabc">
+
+            <jp.wasabeef.richeditor.RichEditor
+                android:id="@+id/editor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"/>
+
+        <TextView
+            android:id="@+id/tvessa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="10dp"
+            android:text="HTML Preview"
+            android:textSize="12sp"
+            android:top="@id/editor" />
+
+        <TextView
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp" />
+
+        </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgpluscreatenote"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        android:src="@drawable/plus"/>
+
+
+
+
+</RelativeLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/relativeloutfolderall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.6dp"
+        android:background="#707070"
+        android:layout_marginLeft="50dp"
+        android:layout_alignParentTop="true"/>
+
+        <ImageView
+            android:id="@+id/imgfolder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/folder"
+            android:layout_alignParentLeft="true"
+            android:foregroundGravity="center_vertical"
+            android:padding="10dp"/>
+        <TextView
+            android:id="@+id/tvitemnamefolder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tất cả"
+            android:textSize="15dp"
+            android:layout_toRightOf="@+id/imgfolder"
+            android:gravity="center_vertical"
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#707070"
+            android:text="0"
+            android:textSize="15dp"
+            android:padding="10dp"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
