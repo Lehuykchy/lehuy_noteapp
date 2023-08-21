@@ -1,10 +1,12 @@
 package com.example.noteapp.adapter;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,10 +20,16 @@ import java.util.List;
 public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderViewHolder>{
     private List<Folder> listFolder;
     private Context context;
+    private IClickListenerFolder iClickListenerFolder;
 
-    public FolderAdapter(List<Folder> listFolder, Context context) {
+    public interface IClickListenerFolder{
+        void onClickItemFolder(int position);
+    }
+
+    public FolderAdapter(List<Folder> listFolder, Context context, IClickListenerFolder iClickListenerFolder) {
         this.listFolder = listFolder;
         this.context = context;
+        this.iClickListenerFolder = iClickListenerFolder;
     }
 
 
@@ -36,13 +44,20 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
 
 
     @Override
-    public void onBindViewHolder(@NonNull FolderViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FolderViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Folder folder = listFolder.get(position);
         if(folder == null){
             return;
         }
 
         holder.itemFolderName.setText(folder.getNameFolder());
+
+        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iClickListenerFolder.onClickItemFolder(position);
+            }
+        });
 
     }
 
@@ -56,10 +71,21 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
 
     public class FolderViewHolder extends RecyclerView.ViewHolder{
         private TextView itemFolderName;
+        private RelativeLayout relativeLayout;
 
         public FolderViewHolder(@NonNull View itemView) {
             super(itemView);
             itemFolderName = itemView.findViewById(R.id.tvitemnamefolder);
+            relativeLayout = itemView.findViewById(R.id.relativeloutfolderall);
         }
     }
+    public Folder GetFolderByPosition(int position) {
+        List<Folder> listFolder = this.GetListFolder();
+        return listFolder.get(position);
+    }
+
+    private List<Folder> GetListFolder() {
+        return this.listFolder;
+    }
+
 }

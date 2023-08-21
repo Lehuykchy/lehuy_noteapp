@@ -27,6 +27,7 @@ import com.example.noteapp.adapter.FolderAdapter;
 import com.example.noteapp.fragment.FragmentBtSheetMoreCreateNote;
 import com.example.noteapp.model.DatabaseHandler;
 import com.example.noteapp.model.Folder;
+import com.example.noteapp.model.Note;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseHandler databaseHandler;
     private FragmentBtSheetMoreCreateNote fragmentBtSheetMoreCreateNote;
     private ImageView imgMoreCreateNote;
+    private TextView tcCountNoteFolder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -149,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
         imgCreateFolder = findViewById(R.id.imgcreatefolder);
         imgCreateNote = findViewById(R.id.imgcreatenote);
         rcvFolder = findViewById(R.id.rcv_folder);
+        tcCountNoteFolder = findViewById(R.id.tvcountnotefolder);
         fragmentBtSheetMoreCreateNote = new FragmentBtSheetMoreCreateNote();
         databaseHandler = new DatabaseHandler(this, "dbnoteapp", null, 1);
 
@@ -156,8 +159,35 @@ public class MainActivity extends AppCompatActivity {
         getListFolder();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rcvFolder.setLayoutManager(linearLayoutManager);
-        folderAdapter = new FolderAdapter(listFolder, this);
+        folderAdapter = new FolderAdapter(listFolder, this, new FolderAdapter.IClickListenerFolder() {
+            @Override
+            public void onClickItemFolder(int position) {
+                Folder folder = folderAdapter.GetFolderByPosition(position);
+                Bundle bundle = new Bundle();
+                bundle.putInt("idfolder", folder.getIdFolder());
+                bundle.putString("namefolder", folder.getNameFolder());
+
+                Intent intent = new Intent(MainActivity.this, NotesActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+
+            }
+        });
         rcvFolder.setAdapter(folderAdapter);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Note> lists = new ArrayList<>();
+                lists.addAll(databaseHandler.getAllNote());
+                tcCountNoteFolder.setText(String.valueOf(lists.size()));
+                for(int i=0; i<listFolder.size(); i++){
+                    List<Note> list = new ArrayList<>();
+                    list.addAll(databaseHandler.getNotesInFolder(listFolder.get(i).getIdFolder()));
+
+                }
+            }
+        }).start();
 
     }
 

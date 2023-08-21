@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:background="@drawable/radius12top">
 
-        <!-- Nội dung chính -->
 
     <LinearLayout
         android:id="@+id/bottom_sheet"
@@ -32,6 +31,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/lnpinbtsheet"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -43,10 +43,12 @@
                 android:layout_marginLeft="10dp">
 
                 <ImageView
+                    android:id="@+id/imglnpinbtsheet"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:src="@drawable/pin"/>
+                    android:src="@drawable/pin" />
                 <TextView
+                    android:id="@+id/tvlnpinbtsheet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ghim"
@@ -56,6 +58,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/lnlockbtsheet"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -67,10 +70,12 @@
                 android:layout_marginLeft="10dp">
 
                 <ImageView
+                    android:id="@+id/imglnlockbtsheet"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:src="@drawable/lock"/>
                 <TextView
+                    android:id="@+id/tvlnlockbtsheet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Khóa"
@@ -80,6 +85,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/lndeletebtsheet"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -92,16 +98,19 @@
                 android:layout_marginRight="10dp">
 
                 <ImageView
+                    android:id="@+id/imglndeletebtsheet"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:src="@drawable/trash_can"/>
                 <TextView
+                    android:id="@+id/tvlndeletebtsheet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ghim"
+                    android:text="Xóa"
                     android:padding="2dp"
                     android:textSize="18dp"
-                    android:textColor="#D1051D"/>
+                    android:textColor="#D1051D"
+                    />
 
             </LinearLayout>
         </LinearLayout>

@@ -18,9 +18,67 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="#F1EEEE"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:id="@+id/lnexitcreatenotenotes"
+                    android:layout_alignParentLeft="true">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/baseline_arrow_back_ios_24"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Thư mục"
+                        android:textColor="#81A34D"
+                        android:gravity="center_vertical"
+                        android:textSize="20dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignParentRight="true"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:id="@+id/imgmorecreatenote"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/more"/>
+
+                    <TextView
+                        android:id="@+id/tvfinshedcreatenote"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Xong"
+                        android:textColor="#81A34D"
+                        android:textStyle="bold"
+                        android:textSize="20dp"
+                        android:layout_marginLeft="10dp"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+
+
+
+            </RelativeLayout>
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -50,7 +108,7 @@
                     android:src="@drawable/search" />
 
                 <EditText
-                    android:id="@+id/edtsearch_folder"
+                    android:id="@+id/edtsearch_notes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -64,14 +122,16 @@
                     android:inputType="text|textNoSuggestions"/>
             </LinearLayout>
 
+
             <TextView
+                android:id="@+id/tvnamefoldernotes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="iCloud"
                 android:layout_marginLeft="30dp"
+                android:text="Tất cả thư mục"
                 android:textSize="20dp"
-                android:textStyle="bold"/>
-
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -80,62 +140,10 @@
                 android:orientation="vertical"
                 android:layout_margin="20dp">
 
-                <RelativeLayout
-                    android:id="@+id/relativeloutfolderall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/imgfolder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/folder"
-                        android:layout_alignParentLeft="true"
-                        android:foregroundGravity="center_vertical"
-                        android:padding="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tất cả"
-                        android:textSize="15dp"
-                        android:layout_toRightOf="@+id/imgfolder"
-                        android:layout_centerVertical="true"
-                        android:padding="10dp"/>
-
-                    <TextView
-                        android:id="@+id/tvcountnotefolder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_toLeftOf="@+id/imgabcd"
-                        android:text="0"
-                        android:textColor="#707070"
-                        android:textSize="15dp" />
-
-                    <ImageView
-                        android:id="@+id/imgabcd"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_alignParentRight="true"
-                        android:src="@drawable/baseline_arrow_forward_ios_24"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="3dp"/>
-
-
-<!--                    <View-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="0.6dp"-->
-<!--                        android:background="#707070"-->
-<!--                        android:layout_marginLeft="50dp"-->
-<!--                        android:layout_alignParentBottom="true"/>-->
-                </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rcv_folder"
+                    android:id="@+id/rcv_notes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -154,15 +162,7 @@
         android:background="#F1EEEE">
 
         <ImageView
-            android:id="@+id/imgcreatefolder"
-            android:layout_width="53dp"
-            android:layout_height="53dp"
-            android:padding="13dp"
-            android:src="@drawable/add_folder"
-            android:layout_marginLeft="7dp"
-            android:layout_alignParentLeft="true" />
-        <ImageView
-            android:id="@+id/imgcreatenote"
+            android:id="@+id/imgcreatenotenotes"
             android:layout_width="53dp"
             android:layout_height="53dp"
             android:padding="13dp"
