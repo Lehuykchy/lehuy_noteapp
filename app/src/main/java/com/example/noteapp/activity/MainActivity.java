@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseHandler databaseHandler;
     private FragmentBtSheetMoreCreateNote fragmentBtSheetMoreCreateNote;
     private ImageView imgMoreCreateNote;
-    private TextView tcCountNoteFolder;
+    private TextView tvCountNoteFolder, tvCountNoteFolderghichu;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,8 +65,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onClickCreateNote() {
-        Intent intent = new Intent(MainActivity.this, CreateNoteActivity.class);
-        startActivity(intent);
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.layout_newnote);
+        Window window = dialog.getWindow();
+        if (window == null) {
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttribute = window.getAttributes();
+        windowAttribute.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttribute);
+
+        TextView continueCreateNote = dialog.findViewById(R.id.tv_continuecreatenote);
+        EditText editText = dialog.findViewById(R.id.edtnamecreatenote);
+
+
+        continueCreateNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString("namenote", editText.getText().toString());
+                Intent intent = new Intent(MainActivity.this, CreateNoteActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                Log.d("databasemain", editText.getText().toString());
+                dialog.dismiss();
+
+            }
+        });
+        dialog.show();
+
+
     }
 
     private void onCLickCreateFolder() {
@@ -151,7 +183,8 @@ public class MainActivity extends AppCompatActivity {
         imgCreateFolder = findViewById(R.id.imgcreatefolder);
         imgCreateNote = findViewById(R.id.imgcreatenote);
         rcvFolder = findViewById(R.id.rcv_folder);
-        tcCountNoteFolder = findViewById(R.id.tvcountnotefolder);
+        tvCountNoteFolder = findViewById(R.id.tvcountnotefolder);
+        tvCountNoteFolderghichu = findViewById(R.id.tvcountnotefolderghichu);
         fragmentBtSheetMoreCreateNote = new FragmentBtSheetMoreCreateNote();
         databaseHandler = new DatabaseHandler(this, "dbnoteapp", null, 1);
 
@@ -175,19 +208,7 @@ public class MainActivity extends AppCompatActivity {
         });
         rcvFolder.setAdapter(folderAdapter);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<Note> lists = new ArrayList<>();
-                lists.addAll(databaseHandler.getAllNote());
-                tcCountNoteFolder.setText(String.valueOf(lists.size()));
-                for(int i=0; i<listFolder.size(); i++){
-                    List<Note> list = new ArrayList<>();
-                    list.addAll(databaseHandler.getNotesInFolder(listFolder.get(i).getIdFolder()));
 
-                }
-            }
-        }).start();
 
     }
 
@@ -195,8 +216,19 @@ public class MainActivity extends AppCompatActivity {
         listFolder.clear();
         listFolder.addAll(databaseHandler.getAllFolder());
         for(int i=0; i<listFolder.size(); i++){
-            Log.d("database", String.valueOf(listFolder.get(i).getIdFolder())+ " "
+            Log.d("databasemain", String.valueOf(listFolder.get(i).getIdFolder())+ " "
                     + listFolder.get(i).getNameFolder());
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        List<Note> listall = new ArrayList<>();
+        List<Note> listghichu = new ArrayList<>();
+        listall.addAll(databaseHandler.getAllNote());
+        tvCountNoteFolder.setText(String.valueOf(listall.size()));
+        listghichu.addAll(databaseHandler.getNotesInFolder(0));
+        tvCountNoteFolderghichu.setText(String.valueOf(listghichu.size()));
     }
 }

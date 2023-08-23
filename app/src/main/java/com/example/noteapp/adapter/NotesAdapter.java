@@ -1,6 +1,7 @@
 package com.example.noteapp.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +72,19 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             e.printStackTrace();
         }
 
+        String namenote = note.getName();
+        if(namenote.equals("Không có tiêu đề")){
+            holder.tvNameNote.setTextColor(Color.parseColor("#A5A5A5"));
+            holder.tvNameNote.setText(note.getName());
+        }else{
+            holder.tvNameNote.setText(note.getName());
+        }
+
+        if(position == listNotes.size() -1){
+            holder.view.setVisibility(View.GONE);
+        }
+
+
         if (folder != null){
             holder.tvNameFolderNote.setText(folder.getNameFolder());
         }
@@ -88,13 +102,20 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     public class NotesViewHolder extends RecyclerView.ViewHolder{
         private TextView tvNameNote, tvTimeNote, tvContextNote, tvNameFolderNote;
         private ImageView imgLockNote;
+        private View view;
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
+            view = itemView.findViewById(R.id.viewitemnote);
             tvNameNote  = itemView.findViewById(R.id.tvnameitemnote);
             tvContextNote= itemView.findViewById(R.id.tvcontextitemnote);
             tvTimeNote = itemView.findViewById(R.id.tvtimeitemnote);
             tvNameFolderNote = itemView.findViewById(R.id.tvnamefolderitemnote);
             imgLockNote = itemView.findViewById(R.id.imglockitemnote);
         }
+    }
+    public void updateData(List<Note> newData) {
+        listNotes.clear();
+        listNotes.addAll(newData);
+        notifyDataSetChanged();
     }
 }

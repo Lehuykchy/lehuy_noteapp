@@ -35,6 +35,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.noteapp.R;
 import com.example.noteapp.fragment.FragmentBtSheetMoreCreateNote;
 import com.example.noteapp.model.DatabaseHandler;
+import com.example.noteapp.model.Folder;
 import com.example.noteapp.model.Note;
 
 import java.util.ArrayList;
@@ -62,6 +63,8 @@ public class CreateNoteActivity extends AppCompatActivity {
     private List<Note> listNote;
     private Note note;
     private boolean isLayoutHandled;
+    private Folder folder = null;
+    private String nameNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +121,6 @@ public class CreateNoteActivity extends AppCompatActivity {
         ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                isLayoutHandled = true;
                 Rect r = new Rect();
                 contentView.getWindowVisibleDisplayFrame(r);
                 int screenHeight = contentView.getHeight();
@@ -132,7 +134,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                 } else {
                     tvFinshedCreateNote.setVisibility(View.GONE);
                     mEditor.clearFocus();
-                    Log.d("database", String.valueOf(mEditor.getHtml() == null));
+                    Log.d("databaserich", String.valueOf(mEditor.getHtml() == null));
                     if (mEditor.getHtml() == null) {
                         return;
                     }
@@ -141,9 +143,15 @@ public class CreateNoteActivity extends AppCompatActivity {
                             Date date = new Date();
                             date.getTime();
                             isCheckedNewNote = true;
-                            note = new Note(0, 1, null, mEditor.getHtml(), false, false, false, null, String.valueOf(date));
+                            if(folder != null){
+                                note = new Note(0, folder.getIdFolder(), nameNote, mEditor.getHtml()
+                                        , false, false, false, null, String.valueOf(date));
+                            }else{
+                                note = new Note(0, 1, nameNote, mEditor.getHtml()
+                                        , false, false, false, null, String.valueOf(date));
+                            }
                             Log.d("database", " ispin" + String.valueOf(note.isPin())
-                                    + " islock" + String.valueOf(note.isLock())
+                                    + " islock" + String.valueOf(note.isLock() )
                             );
                             int idNote = (int) databaseHandler.addNote(note);
                             note.setIdNote(idNote);
@@ -230,7 +238,10 @@ public class CreateNoteActivity extends AppCompatActivity {
         imgMoreCreateNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                note = databaseHandler.getNote(note.getIdNote());
+                if (note != null){
+                    note = databaseHandler.getNote(note.getIdNote());
+                }
+
                 FragmentBtSheetMoreCreateNote bottomSheetFragment = new FragmentBtSheetMoreCreateNote();
                 Bundle args = new Bundle();
                 if (note != null) {
@@ -331,6 +342,19 @@ public class CreateNoteActivity extends AppCompatActivity {
         animation = new AlphaAnimation(1f, 0.5f);
         animation.setDuration(200);
 
+        Bundle receivedBundle = getIntent().getExtras();
+        if (receivedBundle != null) {
+            int idFolder = receivedBundle.getInt("idfolder", 0);
+            String nameFolder = receivedBundle.getString("namefolder", null);
+            nameNote = receivedBundle.getString("namenote", null);
+            if(nameNote == null || nameNote == "" || nameNote.isEmpty()){
+                nameNote = "Không có tiêu đề";
+            }
+            folder = new Folder(idFolder, nameFolder);
+            Log.d("databasegetfolder", String.valueOf(idFolder) + " " + nameFolder +" " + nameNote);
+        }
+
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 R.layout.dropdown_heading, headings);
         autoCompleteHeading.setAdapter(adapter);
@@ -342,8 +366,9 @@ public class CreateNoteActivity extends AppCompatActivity {
         listNote.clear();
         listNote.addAll(databaseHandler.getAllNote());
         for (int i = 0; i < listNote.size(); i++) {
-            Log.d("database", String.valueOf(listNote.size())
+            Log.d("databaselistnote", String.valueOf(listNote.size())
                     + " " + String.valueOf(listNote.get(i).getIdNote())
+                    + " idfolder " + String.valueOf(listNote.get(i).getIdFolder())
                     + " " + listNote.get(i).getContext()
                     + " ispin/" + String.valueOf(listNote.get(i).isPin())
                     + " islock/" + String.valueOf(listNote.get(i).isLock())

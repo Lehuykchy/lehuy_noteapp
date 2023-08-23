@@ -44,6 +44,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_IDFOLDER + " INTEGER PRIMARY KEY, "
                 + COLUMN_NAMEFOLDER+ " TEXT);");
 
+        String insertSampleRow = "INSERT INTO " + TABLE_NAMEFOLDER + " (" + KEY_IDFOLDER + ", " + COLUMN_NAMEFOLDER + ") VALUES (0, 'Ghi chú')";
+
+
         //create table note
         Log.i("database", "Create table note");
         String createNoteTable = String.format("CREATE TABLE " + TABLE_NOTES + " ("
@@ -61,6 +64,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         db.execSQL(createFolderTable);
         db.execSQL(createNoteTable);
+        db.execSQL(insertSampleRow);
 
 
     }

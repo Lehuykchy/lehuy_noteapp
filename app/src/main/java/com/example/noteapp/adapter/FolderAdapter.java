@@ -88,4 +88,6 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
         return this.listFolder;
     }
 
+
+
 }

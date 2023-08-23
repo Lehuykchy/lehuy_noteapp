@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -58,27 +57,27 @@
                     android:layout_marginLeft="10dp"
                     android:background="@android:color/transparent"
                     android:hint="Tìm kiếm"
+                    android:inputType="text|textNoSuggestions"
                     android:textColorHint="#959491"
                     android:textSize="16dp"
-                    android:textStyle="bold"
-                    android:inputType="text|textNoSuggestions"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="iCloud"
                 android:layout_marginLeft="30dp"
+                android:text="iCloud"
                 android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="20dp"
                 android:background="@drawable/radius8_white"
-                android:orientation="vertical"
-                android:layout_margin="20dp">
+                android:orientation="vertical">
 
                 <RelativeLayout
                     android:id="@+id/relativeloutfolderall"
@@ -89,18 +88,19 @@
                         android:id="@+id/imgfolder"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/folder"
                         android:layout_alignParentLeft="true"
                         android:foregroundGravity="center_vertical"
-                        android:padding="10dp"/>
+                        android:padding="10dp"
+                        android:src="@drawable/folder" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tất cả"
-                        android:textSize="15dp"
-                        android:layout_toRightOf="@+id/imgfolder"
                         android:layout_centerVertical="true"
-                        android:padding="10dp"/>
+                        android:layout_toRightOf="@+id/imgfolder"
+                        android:padding="10dp"
+                        android:text="Tất cả"
+                        android:textSize="15dp" />
 
                     <TextView
                         android:id="@+id/tvcountnotefolder"
@@ -121,18 +121,68 @@
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_alignParentRight="true"
-                        android:src="@drawable/baseline_arrow_forward_ios_24"
                         android:layout_centerVertical="true"
-                        android:layout_margin="3dp"/>
+                        android:layout_margin="3dp"
+                        android:src="@drawable/baseline_arrow_forward_ios_24" />
 
 
-<!--                    <View-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="0.6dp"-->
-<!--                        android:background="#707070"-->
-<!--                        android:layout_marginLeft="50dp"-->
-<!--                        android:layout_alignParentBottom="true"/>-->
+
                 </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.6dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="50dp"
+                    android:background="#707070" />
+
+                <RelativeLayout
+                    android:id="@+id/relativeloutfolderghichu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/imgfolder1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentLeft="true"
+                        android:foregroundGravity="center_vertical"
+                        android:padding="10dp"
+                        android:src="@drawable/folder" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/imgfolder1"
+                        android:padding="10dp"
+                        android:text="Ghi chú"
+                        android:textSize="15dp" />
+
+                    <TextView
+                        android:id="@+id/tvcountnotefolderghichu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_toLeftOf="@+id/imgabcde"
+                        android:text="0"
+                        android:textColor="#707070"
+                        android:textSize="15dp" />
+
+                    <ImageView
+                        android:id="@+id/imgabcde"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="3dp"
+                        android:src="@drawable/baseline_arrow_forward_ios_24" />
+                </RelativeLayout>
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcv_folder"
@@ -140,7 +190,6 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
-
 
 
         </LinearLayout>
@@ -157,21 +206,21 @@
             android:id="@+id/imgcreatefolder"
             android:layout_width="53dp"
             android:layout_height="53dp"
-            android:padding="13dp"
-            android:src="@drawable/add_folder"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="7dp"
-            android:layout_alignParentLeft="true" />
+            android:padding="13dp"
+            android:src="@drawable/add_folder" />
+
         <ImageView
             android:id="@+id/imgcreatenote"
             android:layout_width="53dp"
             android:layout_height="53dp"
-            android:padding="13dp"
-            android:src="@drawable/createnote"
+            android:layout_alignParentRight="true"
             android:layout_marginRight="7dp"
-            android:layout_alignParentRight="true"/>
+            android:padding="13dp"
+            android:src="@drawable/createnote" />
 
     </RelativeLayout>
-
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
