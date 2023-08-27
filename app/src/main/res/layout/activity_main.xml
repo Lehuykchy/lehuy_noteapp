@@ -136,52 +136,7 @@
                     android:layout_marginLeft="50dp"
                     android:background="#707070" />
 
-                <RelativeLayout
-                    android:id="@+id/relativeloutfolderghichu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/imgfolder1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentLeft="true"
-                        android:foregroundGravity="center_vertical"
-                        android:padding="10dp"
-                        android:src="@drawable/folder" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/imgfolder1"
-                        android:padding="10dp"
-                        android:text="Ghi chú"
-                        android:textSize="15dp" />
-
-                    <TextView
-                        android:id="@+id/tvcountnotefolderghichu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_toLeftOf="@+id/imgabcde"
-                        android:text="0"
-                        android:textColor="#707070"
-                        android:textSize="15dp" />
-
-                    <ImageView
-                        android:id="@+id/imgabcde"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="3dp"
-                        android:src="@drawable/baseline_arrow_forward_ios_24" />
-                </RelativeLayout>
 
 
                 <androidx.recyclerview.widget.RecyclerView

@@ -44,7 +44,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_IDFOLDER + " INTEGER PRIMARY KEY, "
                 + COLUMN_NAMEFOLDER+ " TEXT);");
 
-        String insertSampleRow = "INSERT INTO " + TABLE_NAMEFOLDER + " (" + KEY_IDFOLDER + ", " + COLUMN_NAMEFOLDER + ") VALUES (0, 'Ghi chú')";
+        String insertSampleRow = "INSERT INTO " + TABLE_NAMEFOLDER
+                + " (" + KEY_IDFOLDER + ", " + COLUMN_NAMEFOLDER + ") VALUES (1, 'Ghi chú')";
 
 
         //create table note
@@ -166,6 +167,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void updateIsLockNote(int id, boolean isLock, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ISLOCK, isLock);
+        values.put(COLUMN_PASSWORD, password);
+
+        String whereClause = KEY_IDNOTE + " = ?";
+        String[] whereArgs = {String.valueOf(id)};
+
+        db.update(TABLE_NOTES, values, whereClause, whereArgs);
+        Log.i("database", "update  khóa note thành công" );
+        db.close();
+    }
+
+    public void updateUnIsLockNote(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ISLOCK, false);
+
+        String whereClause = KEY_IDNOTE + " = ?";
+        String[] whereArgs = {String.valueOf(id)};
+
+        db.update(TABLE_NOTES, values, whereClause, whereArgs);
+        Log.i("database", "update  bỏ khóa note thành công" );
+        db.close();
+    }
+
+
     public void deleteNote(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -177,90 +208,100 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
     public Note getNote(int idnote){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + KEY_IDNOTE + " = " + idnote;
-
-        Cursor cursor = db.rawQuery(query, null);
-
         Note note = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            int id = cursor.getInt(0);
-            int idfolder = cursor.getInt(1);
-            String name = cursor.getString(2);
-            String context = cursor.getString(3);
-            int isPinValues  = cursor.getInt(4);
-            int isLockValues  = cursor.getInt(5);
-            int isCheckedNewNote  = cursor.getInt(6);
-            boolean isPin, isLock, isChecked;
-            if(isLockValues != 0){
-                isLock = true;
-            }else {
-                isLock = false;
-            }
-            if(isPinValues != 0){
-                isPin = true;
-            }else {
-                isPin = false;
-            }
-            if(isCheckedNewNote != 0){
-                isChecked = true;
-            }else {
-                isChecked = false;
-            }
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            String query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + KEY_IDNOTE + " = " + idnote;
 
-            String password = cursor.getString(7);
-            String date = cursor.getString(8);
+            Cursor cursor = db.rawQuery(query, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                int id = cursor.getInt(0);
+                int idfolder = cursor.getInt(1);
+                String name = cursor.getString(2);
+                String context = cursor.getString(3);
+                int isPinValues  = cursor.getInt(4);
+                int isLockValues  = cursor.getInt(5);
+                int isCheckedNewNote  = cursor.getInt(6);
+                boolean isPin, isLock, isChecked;
+                if(isLockValues != 0){
+                    isLock = true;
+                }else {
+                    isLock = false;
+                }
+                if(isPinValues != 0){
+                    isPin = true;
+                }else {
+                    isPin = false;
+                }
+                if(isCheckedNewNote != 0){
+                    isChecked = true;
+                }else {
+                    isChecked = false;
+                }
+
+                String password = cursor.getString(7);
+                String date = cursor.getString(8);
 
 
-            note = new Note(id, idfolder, name, context, isPin, isLock, isChecked, password, date);
-            cursor.moveToNext();
+                note = new Note(id, idfolder, name, context, isPin, isLock, isChecked, password, date);
+                cursor.moveToNext();
+            }
+        }catch (SQLiteException e) {
+            Log.d("database", e.toString());
         }
+
         return note;
     }
 
     public List<Note> getAllNote(){
         List<Note> notes= new ArrayList<>();
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE_NOTES;
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            String query = "SELECT * FROM " + TABLE_NOTES;
 
-        Cursor cursor = db.rawQuery(query, null);
-        cursor.moveToFirst();
-        while(cursor.isAfterLast() == false) {
-            int id = cursor.getInt(0);
-            int idfolder = cursor.getInt(1);
-            String name = cursor.getString(2);
-            String context = cursor.getString(3);
-            int isPinValues  = cursor.getInt(4);
-            int isLockValues  = cursor.getInt(5);
-            int isCheckedNewNote  = cursor.getInt(6);
-            boolean isPin, isLock, isChecked;
-            if(isLockValues != 0){
-                isLock = true;
-            }else {
-                isLock = false;
+            Cursor cursor = db.rawQuery(query, null);
+            cursor.moveToFirst();
+            while(cursor.isAfterLast() == false) {
+                int id = cursor.getInt(0);
+                int idfolder = cursor.getInt(1);
+                String name = cursor.getString(2);
+                String context = cursor.getString(3);
+                int isPinValues  = cursor.getInt(4);
+                int isLockValues  = cursor.getInt(5);
+                int isCheckedNewNote  = cursor.getInt(6);
+                boolean isPin, isLock, isChecked;
+                if(isLockValues != 0){
+                    isLock = true;
+                }else {
+                    isLock = false;
+                }
+                if(isPinValues != 0){
+                    isPin = true;
+                }else {
+                    isPin = false;
+                }
+                if(isCheckedNewNote != 0){
+                    isChecked = true;
+                }else {
+                    isChecked = false;
+                }
+
+                String password = cursor.getString(7);
+                String date = cursor.getString(8);
+
+
+                Note note = new Note(id, idfolder, name, context, isPin, isLock, isChecked, password, date);
+                notes.add(note);
+                cursor.moveToNext();
             }
-            if(isPinValues != 0){
-                isPin = true;
-            }else {
-                isPin = false;
-            }
-            if(isCheckedNewNote != 0){
-                isChecked = true;
-            }else {
-                isChecked = false;
-            }
-
-            String password = cursor.getString(7);
-            String date = cursor.getString(8);
-
-
-            Note note = new Note(id, idfolder, name, context, isPin, isLock, isChecked, password, date);
-            notes.add(note);
-            cursor.moveToNext();
+            cursor.close();
+        }catch (SQLiteException e) {
+            Log.d("database", e.toString());
         }
-        cursor.close();
         return notes;
+
     }
 
     public List<Note> getNotesInFolder(int folderId) {

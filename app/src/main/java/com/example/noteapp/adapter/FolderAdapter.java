@@ -6,6 +6,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,6 +23,7 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
     private List<Folder> listFolder;
     private Context context;
     private IClickListenerFolder iClickListenerFolder;
+    private Animation fadeAnimation;
 
     public interface IClickListenerFolder{
         void onClickItemFolder(int position);
@@ -49,12 +52,14 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
         if(folder == null){
             return;
         }
-
+        fadeAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_animation);
         holder.itemFolderName.setText(folder.getNameFolder());
+
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(fadeAnimation);
                 iClickListenerFolder.onClickItemFolder(position);
             }
         });

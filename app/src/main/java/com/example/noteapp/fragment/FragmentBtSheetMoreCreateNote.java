@@ -1,16 +1,23 @@
 package com.example.noteapp.fragment;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +25,8 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.example.noteapp.R;
+import com.example.noteapp.activity.CreateNoteActivity;
+import com.example.noteapp.activity.NotesActivity;
 import com.example.noteapp.model.DatabaseHandler;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -28,8 +37,10 @@ public class FragmentBtSheetMoreCreateNote extends BottomSheetDialogFragment {
     private TextView lnPinTv, lnDeleteTv, lnLockTv;
     private DatabaseHandler databaseHandler;
     private int idNote;
+    private String password;
     private Boolean isCheckNote, isPin, isLock;
     private Animation animation;
+    private Dialog dialog ;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.layout_btshmorecreatenote, container, false);
@@ -39,8 +50,6 @@ public class FragmentBtSheetMoreCreateNote extends BottomSheetDialogFragment {
         setOnClickPin();
         setOnClickLock();
 
-        Dialog dialog = getDialog();
-        getDialog().getWindow().setWindowAnimations(R.style.DialogAnimation);
 
         return view;
     }
@@ -50,9 +59,148 @@ public class FragmentBtSheetMoreCreateNote extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 v.startAnimation(animation);
+                if(isLock){
+                    isLock = !isLock;
+                    setDialogEnterPassword(isLock);
+                }else {
+                    isLock = !isLock;
+                    setDialogCreatePassword(isLock);
+                }
+                Log.i("database", "pin"+ String.valueOf(isPin));
 
             }
         });
+    }
+
+    private void setDialogCreatePassword(boolean islock) {
+        dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_create_password);
+        Window window = dialog.getWindow();
+        if (window == null) {
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttribute = window.getAttributes();
+        windowAttribute.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttribute);
+
+        TextView saveCreateLock = dialog.findViewById(R.id.tv_savecreatepassword);
+        EditText editText = dialog.findViewById(R.id.edtcreatepassword);
+        TextView destroy = dialog.findViewById(R.id.tv_destroycreatepassword);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    int color = Color.parseColor("#81A34D");
+                    saveCreateLock.setEnabled(true);
+                    saveCreateLock.setTextColor(color);
+                } else {
+                    int color = Color.parseColor("#A5A5A5");
+                    saveCreateLock.setEnabled(false);
+                    saveCreateLock.setTextColor(color);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        saveCreateLock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lnLockImg.setImageResource(R.drawable.unlocked);
+                lnLockTv.setTextColor(Color.parseColor("#071F9C"));
+                lnLockTv.setText("Bỏ khóa");
+                databaseHandler.updateIsLockNote(idNote, islock, String.valueOf(editText.getText()));
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .remove(FragmentBtSheetMoreCreateNote.this).commit();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private void setDialogEnterPassword(boolean islock) {
+        dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_enter_password);
+        Window window = dialog.getWindow();
+        if (window == null) {
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttribute = window.getAttributes();
+        windowAttribute.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttribute);
+
+        TextView continueCreateLock = dialog.findViewById(R.id.tv_enterokpassword);
+        TextView destroy = dialog.findViewById(R.id.tv_destroyenterpassword);
+        EditText editText = dialog.findViewById(R.id.edtenterpassword);
+        TextView textView = dialog.findViewById(R.id.tventerpassword);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    int color = Color.parseColor("#81A34D");
+                    continueCreateLock.setEnabled(true);
+                    continueCreateLock.setTextColor(color);
+                } else {
+                    int color = Color.parseColor("#A5A5A5");
+                    continueCreateLock.setEnabled(false);
+                    continueCreateLock.setTextColor(color);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        destroy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        continueCreateLock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(String.valueOf(editText.getText()).equals(password)){
+                    lnLockImg.setImageResource(R.drawable.lock);
+                    lnLockTv.setTextColor(Color.parseColor("#071F9C"));
+                    lnLockTv.setText("Khóa");
+                    databaseHandler.updateUnIsLockNote(idNote);
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .remove(FragmentBtSheetMoreCreateNote.this).commit();
+                    dialog.dismiss();
+                }else {
+                    textView.setText("Mật khẩu không đúng");
+                    textView.setTextColor(Color.parseColor("#F30404"));
+                    editText.setText("");
+                }
+
+            }
+        });
+        dialog.show();
     }
 
     private void setOnClickPin() {
@@ -121,6 +269,7 @@ public class FragmentBtSheetMoreCreateNote extends BottomSheetDialogFragment {
             isCheckNote = args.getBoolean("ischecknote", false);
             isPin = args.getBoolean("ispin", false);
             isLock = args.getBoolean("islock", false);
+            password = args.getString("password", null);
         }
         if (idNote == 0){
             int color = Color.parseColor("#A5A5A5");

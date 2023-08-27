@@ -1,11 +1,14 @@
 package com.example.noteapp.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,14 +32,23 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     private List<Note> listNotes;
     private Context context;
     private Folder folder = null;
-    public NotesAdapter(List<Note> listNotes, Context context){
+
+    private NotesAdapter.IClickListenerNote iClickListenerNote;
+    private Animation fadeAnimation;
+
+    public interface IClickListenerNote{
+        void onClickItemNote(int position);
+    }
+    public NotesAdapter(List<Note> listNotes, Context context , IClickListenerNote iClickListenerNote){
         this.listNotes = listNotes;
         this.context = context;
+        this.iClickListenerNote = iClickListenerNote;
     }
-    public NotesAdapter(List<Note> listNotes, Context context, Folder folder){
+    public NotesAdapter(List<Note> listNotes, Context context, Folder folder, IClickListenerNote iClickListenerNote){
         this.listNotes = listNotes;
         this.context = context;
         this.folder = folder;
+        this.iClickListenerNote = iClickListenerNote;
     }
 
     @NonNull
@@ -49,7 +61,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NotesViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Note note = listNotes.get(position);
         if(note == null){
             return;
@@ -89,6 +101,19 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             holder.tvNameFolderNote.setText(folder.getNameFolder());
         }
 
+        if(note.isLock()){
+            holder.imgLockNote.setVisibility(View.VISIBLE);
+        }else{
+            holder.imgLockNote.setVisibility(View.INVISIBLE);
+        }
+
+        holder.lnItemNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iClickListenerNote.onClickItemNote(position);
+            }
+        });
+
     }
 
     @Override
@@ -102,6 +127,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     public class NotesViewHolder extends RecyclerView.ViewHolder{
         private TextView tvNameNote, tvTimeNote, tvContextNote, tvNameFolderNote;
         private ImageView imgLockNote;
+        private LinearLayout lnItemNote;
         private View view;
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -111,6 +137,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             tvTimeNote = itemView.findViewById(R.id.tvtimeitemnote);
             tvNameFolderNote = itemView.findViewById(R.id.tvnamefolderitemnote);
             imgLockNote = itemView.findViewById(R.id.imglockitemnote);
+            lnItemNote = itemView.findViewById(R.id.lnitemnote);
         }
     }
     public void updateData(List<Note> newData) {
@@ -118,4 +145,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         listNotes.addAll(newData);
         notifyDataSetChanged();
     }
+
+    public Note GetNoteByPosition(int position) {
+        List<Note> listNote = this.GetListNote();
+        return listNote.get(position);
+    }
+
+    private List<Note> GetListNote() {
+        return this.listNotes;
+    }
+
 }

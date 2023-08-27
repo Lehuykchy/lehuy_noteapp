@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,16 +13,21 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.noteapp.NoteItemTouchHelperCallback;
 import com.example.noteapp.R;
 import com.example.noteapp.adapter.FolderAdapter;
 import com.example.noteapp.fragment.FragmentBtSheetMoreCreateNote;
@@ -38,9 +44,11 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rcvFolder;
     private FolderAdapter folderAdapter;
     private DatabaseHandler databaseHandler;
-    private FragmentBtSheetMoreCreateNote fragmentBtSheetMoreCreateNote;
+
     private ImageView imgMoreCreateNote;
-    private TextView tvCountNoteFolder, tvCountNoteFolderghichu;
+    private RelativeLayout relativeloutfolderall;
+    private TextView tvCountNoteFolder;
+    private Animation fadeAnimation;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initUI();
+        fadeAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_animation);
 
         imgCreateFolder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +71,19 @@ public class MainActivity extends AppCompatActivity {
                 onClickCreateNote();
             }
         });
+        relativeloutfolderall.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                relativeloutfolderall.startAnimation(fadeAnimation);
+                setOnClickRelativeLoutFolderAll();
+            }
+        });
+    }
+
+    private void setOnClickRelativeLoutFolderAll() {
+        Intent intent = new Intent(MainActivity.this, NotesActivity.class);
+        startActivity(intent);
     }
 
     private void onClickCreateNote() {
@@ -184,8 +206,7 @@ public class MainActivity extends AppCompatActivity {
         imgCreateNote = findViewById(R.id.imgcreatenote);
         rcvFolder = findViewById(R.id.rcv_folder);
         tvCountNoteFolder = findViewById(R.id.tvcountnotefolder);
-        tvCountNoteFolderghichu = findViewById(R.id.tvcountnotefolderghichu);
-        fragmentBtSheetMoreCreateNote = new FragmentBtSheetMoreCreateNote();
+        relativeloutfolderall  = findViewById(R.id.relativeloutfolderall);
         databaseHandler = new DatabaseHandler(this, "dbnoteapp", null, 1);
 
         listFolder = new ArrayList<>();
@@ -206,7 +227,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        ItemTouchHelper.Callback callback = new NoteItemTouchHelperCallback(MainActivity.this);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         rcvFolder.setAdapter(folderAdapter);
+        touchHelper.attachToRecyclerView(rcvFolder);
 
 
 
@@ -228,7 +252,5 @@ public class MainActivity extends AppCompatActivity {
         List<Note> listghichu = new ArrayList<>();
         listall.addAll(databaseHandler.getAllNote());
         tvCountNoteFolder.setText(String.valueOf(listall.size()));
-        listghichu.addAll(databaseHandler.getNotesInFolder(0));
-        tvCountNoteFolderghichu.setText(String.valueOf(listghichu.size()));
     }
 }
