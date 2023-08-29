@@ -85,7 +85,7 @@
             android:id="@+id/toolbarcratenote"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:visibility="gone"
+            android:visibility="visible"
             android:animateLayoutChanges="true"
             android:layout_margin="10dp"
             android:background="@drawable/radius12stroke">
@@ -160,14 +160,23 @@
                     android:contentDescription="@null"
                     android:src="@drawable/listnumber" />
                 <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-                <ImageButton
+                    android:id="@+id/action_undo"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_margin="2dp"
+                    android:background="@color/white"
+                    android:contentDescription="@null"
+                    android:src="@drawable/undo_circular_arrow"/>
+                <ImageButton
+                    android:id="@+id/action_redo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:background="@color/white"
+                    android:contentDescription="@null"
+                    android:src="@drawable/redo_arrow_symbol"/>
 
 
 

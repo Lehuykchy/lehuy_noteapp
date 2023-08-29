@@ -59,7 +59,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     private Animation animation;
     private TextView mPreview, tvFinshedCreateNote, tvOpenLockNote;
     private ImageView imgMoreCreateNote, imgPlusCreateNote, imgLockNote;
-    private ImageButton imgBold, imgItalic, imgBullets, imgUnderline, imgListNumber;
+    private ImageButton imgBold, imgItalic, imgBullets, imgUnderline, imgListNumber, imgUndo, imgRedo;
     private AutoCompleteTextView autoCompleteHeading;
     private Toolbar toolbarCreateNote;
     //        private boolean isImageOne = true;
@@ -103,6 +103,8 @@ public class CreateNoteActivity extends AppCompatActivity {
 
         setClickImgLockNote();
         setOnClickImgBold();
+        setOnClickImgUndo();
+        setOnClickImgRedo();
         setOnClickImgItalic();
         setOnClickImgUnderline();
         setOnClickImgBullets();
@@ -118,6 +120,7 @@ public class CreateNoteActivity extends AppCompatActivity {
 
     }
 
+
     private void setOnClickTvOpenLockNote() {
         tvOpenLockNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +130,7 @@ public class CreateNoteActivity extends AppCompatActivity {
         });
     }
 
-    private void setOpenLockNote(){
+    private void setOpenLockNote() {
         isClickLock = !isClickLock;
         Dialog dialog = new Dialog(CreateNoteActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -214,305 +217,328 @@ public class CreateNoteActivity extends AppCompatActivity {
 
     }
 
-        private void setOnClickLnExit () {
-            lnExitCreateNote.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.startAnimation(animation);
-                    finish();
-                }
-            });
-        }
+    private void setOnClickLnExit() {
+        lnExitCreateNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                finish();
+            }
+        });
+    }
 
-        //xét sự kiện bàn phím hiện lên
-        private void setEventKeyPad () {
-            contentView = findViewById(android.R.id.content);
-            ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    Rect r = new Rect();
-                    contentView.getWindowVisibleDisplayFrame(r);
-                    int screenHeight = contentView.getHeight();
-                    int keypadHeight = screenHeight - contentView.getRootView().getHeight();
-                    Log.d("sizekeyboard", String.valueOf(keypadHeight));
-                    if (keypadHeight < -500) {
-                        //Nếu bàn phím hiện và có chứ thì sẽ chuyển ischeckenter để lưu note còn
-                        // không sẽ không lưu hoặc xóa note hiện tại
-                        tvFinshedCreateNote.setVisibility(View.VISIBLE);
+    //xét sự kiện bàn phím hiện lên
+    private void setEventKeyPad() {
+        contentView = findViewById(android.R.id.content);
+        ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                contentView.getWindowVisibleDisplayFrame(r);
+                int screenHeight = contentView.getHeight();
+                int keypadHeight = screenHeight - contentView.getRootView().getHeight();
+                Log.d("sizekeyboard", String.valueOf(keypadHeight));
+                if (keypadHeight < -500) {
+                    //Nếu bàn phím hiện và có chứ thì sẽ chuyển ischeckenter để lưu note còn
+                    // không sẽ không lưu hoặc xóa note hiện tại
+                    tvFinshedCreateNote.setVisibility(View.VISIBLE);
 
-                    } else {
-                        tvFinshedCreateNote.setVisibility(View.GONE);
-                        mEditor.clearFocus();
-                        Log.d("databaserich", String.valueOf(mEditor.getHtml() == null));
-                        if (mEditor.getHtml() == null) {
-                            return;
-                        }
-                        if (mEditor.getHtml().length() != 0) {
-                            if (note == null) {
-                                Date date = new Date();
-                                date.getTime();
-                                isCheckedNewNote = true;
-                                if (folder != null) {
-                                    note = new Note(0, folder.getIdFolder(), nameNote, mEditor.getHtml()
-                                            , false, false, false, null, String.valueOf(date));
-                                } else {
-                                    note = new Note(0, 1, nameNote, mEditor.getHtml()
-                                            , false, false, false, null, String.valueOf(date));
-                                }
-                                Log.d("database", " ispin" + String.valueOf(note.isPin())
-                                        + " islock" + String.valueOf(note.isLock())
-                                );
-                                int idNote = (int) databaseHandler.addNote(note);
-                                note.setIdNote(idNote);
-                                getListNote();
+                } else {
+                    tvFinshedCreateNote.setVisibility(View.GONE);
+                    mEditor.clearFocus();
+                    Log.d("databaserich", String.valueOf(mEditor.getHtml() == null));
+                    if (mEditor.getHtml() == null) {
+                        return;
+                    }
+                    if (mEditor.getHtml().length() != 0) {
+                        if (note == null) {
+                            Date date = new Date();
+                            date.getTime();
+                            isCheckedNewNote = true;
+                            if (folder != null) {
+                                note = new Note(0, folder.getIdFolder(), nameNote, mEditor.getHtml()
+                                        , false, false, false, null, String.valueOf(date));
                             } else {
-                                Date date = new Date();
-                                date.getTime();
-                                databaseHandler.updateNote(note.getIdNote(), mEditor.getHtml(), String.valueOf(date));
-//                            note = databaseHandler.getNote(note.getIdNote());
-                                isCheckNote = true;
-                                getListNote();
+                                note = new Note(0, 1, nameNote, mEditor.getHtml()
+                                        , false, false, false, null, String.valueOf(date));
                             }
-
+                            Log.d("database", " ispin" + String.valueOf(note.isPin())
+                                    + " islock" + String.valueOf(note.isLock())
+                            );
+                            int idNote = (int) databaseHandler.addNote(note);
+                            note.setIdNote(idNote);
+                            getListNote();
                         } else {
-                            if (note != null) {
-                                databaseHandler.deleteNote(note.getIdNote());
-                                isCheckNote = false;
-                                getListNote();
-                            }
+                            Date date = new Date();
+                            date.getTime();
+                            databaseHandler.updateNote(note.getIdNote(), mEditor.getHtml(), String.valueOf(date));
+//                            note = databaseHandler.getNote(note.getIdNote());
+                            isCheckNote = true;
+                            getListNote();
                         }
 
-                    }
-                }
-            };
-            contentView.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
-        }
-
-
-        private void setOnClickTvFinshedCreateNote () {
-            tvFinshedCreateNote.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Thu bàn phím
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            });
-        }
-
-        private void setOnclickImgPlusCreateNote () {
-            imgPlusCreateNote.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!isToolbarVisible) {
-                        imgPlusCreateNote.setImageResource(R.drawable.cancel);
-                        showToolbar();
                     } else {
-                        imgPlusCreateNote.setImageResource(R.drawable.plus);
-                        hideToolbar();
-                    }
-                }
-            });
-        }
-
-        private void showToolbar () {
-            ViewPropertyAnimator animator = toolbarCreateNote.animate()
-                    .translationX(0)
-                    .setDuration(500)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            toolbarCreateNote.setVisibility(View.VISIBLE);
+                        if (note != null) {
+                            databaseHandler.deleteNote(note.getIdNote());
+                            isCheckNote = false;
+                            getListNote();
                         }
-                    });
-            animator.start();
-            isToolbarVisible = true;
-        }
-
-        private void hideToolbar () {
-            ViewPropertyAnimator animator = toolbarCreateNote.animate()
-                    .translationX(toolbarCreateNote.getWidth())
-                    .setDuration(500)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            toolbarCreateNote.setVisibility(View.GONE);
-                        }
-                    });
-            animator.start();
-            isToolbarVisible = false;
-        }
-
-        private void setOnCLickImgMoreCreateNote () {
-            imgMoreCreateNote.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (note != null) {
-                        note = databaseHandler.getNote(note.getIdNote());
                     }
 
-                    FragmentBtSheetMoreCreateNote bottomSheetFragment = new FragmentBtSheetMoreCreateNote();
-                    Bundle args = new Bundle();
-                    if (note != null) {
-                        args.putInt("idnote", note.getIdNote());
-                        args.putBoolean("ischecknote", isCheckNote);
-                        args.putBoolean("ispin", note.isPin());
-                        args.putBoolean("islock", note.isLock());
-                        args.putString("password", note.getPassword());
+                }
+            }
+        };
+        contentView.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
+    }
+
+
+    private void setOnClickTvFinshedCreateNote() {
+        tvFinshedCreateNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Thu bàn phím
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        });
+    }
+
+    private void setOnclickImgPlusCreateNote() {
+        imgPlusCreateNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isToolbarVisible) {
+                    imgPlusCreateNote.setImageResource(R.drawable.cancel);
+                    showToolbar();
+                } else {
+                    imgPlusCreateNote.setImageResource(R.drawable.plus);
+                    hideToolbar();
+                }
+            }
+        });
+    }
+
+    private void showToolbar() {
+        ViewPropertyAnimator animator = toolbarCreateNote.animate()
+                .translationX(0)
+                .setDuration(500)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        toolbarCreateNote.setVisibility(View.VISIBLE);
                     }
-                    bottomSheetFragment.setArguments(args);
-                    bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                }
-            });
-        }
+                });
+        animator.start();
+        isToolbarVisible = true;
+    }
 
-
-        private void setOnClickImgHeading () {
-            autoCompleteHeading.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mEditor.setHeading(position + 1);
-                }
-            });
-        }
-
-        private void setOnClickImgListNumber () {
-            imgListNumber.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.startAnimation(animation);
-                    mEditor.setNumbers();
-
-                }
-            });
-
-        }
-
-        private void setOnClickImgBullets () {
-            imgBullets.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.startAnimation(animation);
-                    mEditor.setBullets();
-
-                }
-            });
-
-        }
-
-        private void setOnClickImgUnderline () {
-            imgUnderline.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.startAnimation(animation);
-                    mEditor.setUnderline();
-
-                }
-            });
-
-        }
-
-        private void setOnClickImgItalic () {
-            imgItalic.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.startAnimation(animation);
-                    mEditor.setItalic();
-                }
-            });
-
-        }
-
-        private void setOnClickImgBold () {
-            imgBold.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.startAnimation(animation);
-                    mEditor.setBold();
-                }
-            });
-
-        }
-
-        private void initUI () {
-            mEditor = findViewById(R.id.editor);
-            imgBold = findViewById(R.id.action_bold);
-            imgItalic = findViewById(R.id.action_italic);
-            imgBullets = findViewById(R.id.action_insert_bullets);
-            imgUnderline = findViewById(R.id.action_underline);
-            imgListNumber = findViewById(R.id.action_insert_numbers);
-            imgMoreCreateNote = findViewById(R.id.imgmorecreatenote);
-            imgPlusCreateNote = findViewById(R.id.imgpluscreatenote);
-            toolbarCreateNote = findViewById(R.id.toolbarcratenote);
-            tvFinshedCreateNote = findViewById(R.id.tvfinshedcreatenote);
-            lnExitCreateNote = findViewById(R.id.lnexitcreatenote);
-            autoCompleteHeading = findViewById(R.id.autohompleteheading);
-            imgLockNote = findViewById(R.id.imglockcreatenote);
-            lnLockCreateNote = findViewById(R.id.lnlockcreatenote);
-            tvOpenLockNote = findViewById(R.id.tvopenlocknote);
-            databaseHandler = new DatabaseHandler(this, "dbnoteapp", null, 1);
-
-            animation = new AlphaAnimation(1f, 0.5f);
-            animation.setDuration(200);
-
-            Bundle receivedBundle = getIntent().getExtras();
-            if (receivedBundle != null) {
-                int idFolder = receivedBundle.getInt("idfolder", 0);
-                String nameFolder = receivedBundle.getString("namefolder", null);
-                nameNote = receivedBundle.getString("namenote", null);
-                folder = new Folder(idFolder, nameFolder);
-
-                int idNote = receivedBundle.getInt("idnote", 0);
-                int idNoteFolder = receivedBundle.getInt("idnotefolder", 0);
-                String nameNotes = receivedBundle.getString("namenotes", null);
-                String noteContext = receivedBundle.getString("notecontext", null);
-                String notePassword = receivedBundle.getString("notepassword", null);
-                String noteDate = receivedBundle.getString("notedate", null);
-                boolean noteIslock = receivedBundle.getBoolean("noteislock", false);
-                boolean noteIspin = receivedBundle.getBoolean("noteispin", false);
-                isClickLock = noteIslock;
-
-                if (idNote != 0) {
-                    note = new Note(idNote, idNoteFolder, nameNotes, noteContext, noteIspin
-                            , noteIslock, false, notePassword, noteDate);
-                    if (note.isLock()) {
-                        imgLockNote.setVisibility(View.VISIBLE);
-                        lnLockCreateNote.setVisibility(View.VISIBLE);
-                    } else {
-                        imgLockNote.setVisibility(View.INVISIBLE);
-                        lnLockCreateNote.setVisibility(View.GONE);
+    private void hideToolbar() {
+        ViewPropertyAnimator animator = toolbarCreateNote.animate()
+                .translationX(toolbarCreateNote.getWidth())
+                .setDuration(500)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        toolbarCreateNote.setVisibility(View.GONE);
                     }
+                });
+        animator.start();
+        isToolbarVisible = false;
+    }
+
+    private void setOnCLickImgMoreCreateNote() {
+        imgMoreCreateNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (note != null) {
+                    note = databaseHandler.getNote(note.getIdNote());
                 }
 
-                Log.d("databasegetfolder", String.valueOf(idFolder) + " " + nameFolder + " " + nameNote);
+                FragmentBtSheetMoreCreateNote bottomSheetFragment = new FragmentBtSheetMoreCreateNote();
+                Bundle args = new Bundle();
+                if (note != null) {
+                    args.putInt("idnote", note.getIdNote());
+                    args.putBoolean("ischecknote", isCheckNote);
+                    args.putBoolean("ispin", note.isPin());
+                    args.putBoolean("islock", note.isLock());
+                    args.putString("password", note.getPassword());
+                }
+                bottomSheetFragment.setArguments(args);
+                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
             }
+        });
+    }
 
-            if (nameNote == null || nameNote == "" || nameNote.isEmpty()) {
-                nameNote = "Không có tiêu đề";
+
+    private void setOnClickImgHeading() {
+        autoCompleteHeading.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mEditor.setHeading(position + 1);
             }
+        });
+    }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                    R.layout.dropdown_heading, headings);
-            autoCompleteHeading.setAdapter(adapter);
+    private void setOnClickImgListNumber() {
+        imgListNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                mEditor.setNumbers();
 
-            listNote = new ArrayList<>();
-        }
-
-        private void getListNote () {
-            listNote.clear();
-            listNote.addAll(databaseHandler.getAllNote());
-            for (int i = 0; i < listNote.size(); i++) {
-                Log.d("databaselistnote", String.valueOf(listNote.size())
-                        + " " + String.valueOf(listNote.get(i).getIdNote())
-                        + " idfolder " + String.valueOf(listNote.get(i).getIdFolder())
-                        + " " + listNote.get(i).getContext()
-                        + " ispin/" + String.valueOf(listNote.get(i).isPin())
-                        + " islock/" + String.valueOf(listNote.get(i).isLock())
-                        + " pass" + String.valueOf(listNote.get(i).getPassword())
-                        + " isChecked/" + String.valueOf(listNote.get(i).isCheckedNewNote())
-                        + " " + listNote.get(i).getDate() + "-" + mEditor.getHtml()
-                        + " " + String.valueOf(mEditor.getHtml().length()));
             }
-        }
+        });
 
     }
+
+    private void setOnClickImgBullets() {
+        imgBullets.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                mEditor.setBullets();
+
+            }
+        });
+
+    }
+
+    private void setOnClickImgUnderline() {
+        imgUnderline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                mEditor.setUnderline();
+
+            }
+        });
+
+    }
+
+    private void setOnClickImgItalic() {
+        imgItalic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                mEditor.setItalic();
+            }
+        });
+
+    }
+
+    private void setOnClickImgBold() {
+        imgBold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                mEditor.setBold();
+            }
+        });
+
+    }
+
+    private void setOnClickImgRedo() {
+        imgRedo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                mEditor.redo();
+            }
+        });
+    }
+
+    private void setOnClickImgUndo() {
+        imgUndo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animation);
+                mEditor.undo();
+            }
+        });
+
+    }
+
+    private void initUI() {
+        mEditor = findViewById(R.id.editor);
+        imgBold = findViewById(R.id.action_bold);
+        imgItalic = findViewById(R.id.action_italic);
+        imgBullets = findViewById(R.id.action_insert_bullets);
+        imgUnderline = findViewById(R.id.action_underline);
+        imgListNumber = findViewById(R.id.action_insert_numbers);
+        imgMoreCreateNote = findViewById(R.id.imgmorecreatenote);
+        imgPlusCreateNote = findViewById(R.id.imgpluscreatenote);
+        toolbarCreateNote = findViewById(R.id.toolbarcratenote);
+        tvFinshedCreateNote = findViewById(R.id.tvfinshedcreatenote);
+        lnExitCreateNote = findViewById(R.id.lnexitcreatenote);
+        autoCompleteHeading = findViewById(R.id.autohompleteheading);
+        imgLockNote = findViewById(R.id.imglockcreatenote);
+        lnLockCreateNote = findViewById(R.id.lnlockcreatenote);
+        tvOpenLockNote = findViewById(R.id.tvopenlocknote);
+        imgUndo = findViewById(R.id.action_undo);
+        imgRedo = findViewById(R.id.action_redo);
+        databaseHandler = new DatabaseHandler(this, "dbnoteapp", null, 1);
+
+        animation = new AlphaAnimation(1f, 0.5f);
+        animation.setDuration(200);
+
+        Bundle receivedBundle = getIntent().getExtras();
+        if (receivedBundle != null) {
+            int idFolder = receivedBundle.getInt("idfolder", 0);
+            String nameFolder = receivedBundle.getString("namefolder", null);
+            nameNote = receivedBundle.getString("namenote", null);
+            folder = new Folder(idFolder, nameFolder);
+
+            int idNote = receivedBundle.getInt("idnote", 0);
+            int idNoteFolder = receivedBundle.getInt("idnotefolder", 0);
+            String nameNotes = receivedBundle.getString("namenotes", null);
+            String noteContext = receivedBundle.getString("notecontext", null);
+            String notePassword = receivedBundle.getString("notepassword", null);
+            String noteDate = receivedBundle.getString("notedate", null);
+            boolean noteIslock = receivedBundle.getBoolean("noteislock", false);
+            boolean noteIspin = receivedBundle.getBoolean("noteispin", false);
+            isClickLock = noteIslock;
+
+            if (idNote != 0) {
+                note = new Note(idNote, idNoteFolder, nameNotes, noteContext, noteIspin
+                        , noteIslock, false, notePassword, noteDate);
+                if (note.isLock()) {
+                    imgLockNote.setVisibility(View.VISIBLE);
+                    lnLockCreateNote.setVisibility(View.VISIBLE);
+                } else {
+                    imgLockNote.setVisibility(View.INVISIBLE);
+                    lnLockCreateNote.setVisibility(View.GONE);
+                }
+            }
+
+            Log.d("databasegetfolder", String.valueOf(idFolder) + " " + nameFolder + " " + nameNote);
+        }
+
+        if (nameNote == null || nameNote == "" || nameNote.isEmpty()) {
+            nameNote = "Không có tiêu đề";
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                R.layout.dropdown_heading, headings);
+        autoCompleteHeading.setAdapter(adapter);
+
+        listNote = new ArrayList<>();
+    }
+
+    private void getListNote() {
+        listNote.clear();
+        listNote.addAll(databaseHandler.getAllNote());
+        for (int i = 0; i < listNote.size(); i++) {
+            Log.d("databaselistnote", String.valueOf(listNote.size())
+                    + " " + String.valueOf(listNote.get(i).getIdNote())
+                    + " idfolder " + String.valueOf(listNote.get(i).getIdFolder())
+                    + " " + listNote.get(i).getContext()
+                    + " ispin/" + String.valueOf(listNote.get(i).isPin())
+                    + " islock/" + String.valueOf(listNote.get(i).isLock())
+                    + " pass" + String.valueOf(listNote.get(i).getPassword())
+                    + " isChecked/" + String.valueOf(listNote.get(i).isCheckedNewNote())
+                    + " " + listNote.get(i).getDate() + "-" + mEditor.getHtml()
+                    + " " + String.valueOf(mEditor.getHtml().length()));
+        }
+    }
+
+}
