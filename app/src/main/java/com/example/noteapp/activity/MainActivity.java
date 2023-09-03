@@ -227,10 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        ItemTouchHelper.Callback callback = new NoteItemTouchHelperCallback(MainActivity.this);
-        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         rcvFolder.setAdapter(folderAdapter);
-        touchHelper.attachToRecyclerView(rcvFolder);
 
 
 

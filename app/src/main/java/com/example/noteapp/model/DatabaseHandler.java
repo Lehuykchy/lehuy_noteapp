@@ -196,6 +196,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void updateChangeName(int id, String name){
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_NAME_NOTE, name);
+
+            String whereClause = KEY_IDNOTE + " = ?";
+            String[] whereArgs = {String.valueOf(id)};
+
+            db.update(TABLE_NOTES, values, whereClause, whereArgs);
+            Log.i("database", "update  tên note thành công" );
+            db.close();
+        }catch (SQLiteException e) {
+            Log.d("database", e.toString());
+        }
+    }
+
 
     public void deleteNote(int id) {
         SQLiteDatabase db = this.getWritableDatabase();

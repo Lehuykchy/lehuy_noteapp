@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -17,9 +19,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,12 +73,12 @@ public class NotesActivity extends AppCompatActivity {
         rltPinRcv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isClick){
+                if (isClick) {
                     isClick = !isClick;
                     imgRltPinRcv.setImageResource(R.drawable.baseline_arrow_forward_ios_24);
                     rcvNotesPin.setVisibility(View.GONE);
 
-                }else {
+                } else {
                     isClick = !isClick;
                     imgRltPinRcv.setImageResource(R.drawable.down);
                     rcvNotesPin.setVisibility(View.VISIBLE);
@@ -108,7 +112,7 @@ public class NotesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("namenote", editText.getText().toString());
-                if(folder != null){
+                if (folder != null) {
                     bundle.putInt("idfolder", folder.getIdFolder());
                     bundle.putString("namefolder", folder.getNameFolder());
                 }
@@ -123,7 +127,6 @@ public class NotesActivity extends AppCompatActivity {
     }
 
 
-
     private void setOnClickLnExit() {
         lnExit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +136,7 @@ public class NotesActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void initUI() {
         recyclerView = findViewById(R.id.rcv_notes);
@@ -168,7 +172,7 @@ public class NotesActivity extends AppCompatActivity {
         getListNote(listNotePin, listNote);
 
 
-        if(listNote.size() == 0){
+        if (listNote.size() == 0) {
             tvRcvNameFolderNotes.setVisibility(View.GONE);
         }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -190,17 +194,68 @@ public class NotesActivity extends AppCompatActivity {
                 }
             });
         }
-        ItemTouchHelper.Callback callback = new NoteItemTouchHelperCallback(this);
+        ItemTouchHelper.Callback callback = new NoteItemTouchHelperCallback(this, recyclerView, false, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public void instantiateUnderlayButton(RecyclerView.ViewHolder viewHolder, List<UnderlayButton> underlayButtons, List<UnderlayButton> underlayButtonsRight) {
+                underlayButtons.add(new NoteItemTouchHelperCallback.UnderlayButton(
+                        AppCompatResources.getDrawable(
+                                NotesActivity.this,
+                                R.drawable.trash_can_enable
+                        ),
+                        Color.parseColor("#FF0000"),
+                        new NoteItemTouchHelperCallback.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                databaseHandler.deleteNote(listNote.get(pos).getIdNote());
+                                getListNote(listNotePin, listNote);
+                                notesAdapter.notifyDataSetChanged();
+                            }
+                        }
+                ));
+
+                underlayButtons.add(new NoteItemTouchHelperCallback.UnderlayButton(
+                        AppCompatResources.getDrawable(
+                                NotesActivity.this,
+                                R.drawable.editing
+                        ),
+                        Color.parseColor("#56BC93"),
+                        new NoteItemTouchHelperCallback.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                onCLickEditName(listNote.get(pos).getIdNote(), notesAdapter);
+                            }
+                        }
+                ));
+
+                underlayButtonsRight.add(new NoteItemTouchHelperCallback.UnderlayButton(
+                        AppCompatResources.getDrawable(
+                                NotesActivity.this,
+                                R.drawable.pin_enable
+                        ),
+                        Color.parseColor("#FFC74A"),
+                        new NoteItemTouchHelperCallback.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                databaseHandler.updateIsPinNote(listNote.get(pos).getIdNote(), true);
+                                getListNote(listNotePin, listNote);
+                                notesAdapterPin.notifyDataSetChanged();
+                                notesAdapter.notifyDataSetChanged();
+                            }
+                        }
+                ));
+            }
+
+        };
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         recyclerView.setAdapter(notesAdapter);
         touchHelper.attachToRecyclerView(recyclerView);
 
 
 
-
+//ListNotePin
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this);
         rcvNotesPin.setLayoutManager(linearLayoutManager1);
-        if (listNotePin.size()>0){
+        if (listNotePin.size() > 0) {
             lnPinRcv.setVisibility(View.VISIBLE);
         }
         if (folder != null) {
@@ -220,9 +275,128 @@ public class NotesActivity extends AppCompatActivity {
                 }
             });
         }
+        ItemTouchHelper.Callback callback2 = new NoteItemTouchHelperCallback(this, rcvNotesPin, false, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public void instantiateUnderlayButton(RecyclerView.ViewHolder viewHolder, List<UnderlayButton> underlayButtons, List<UnderlayButton> underlayButtonsRight) {
+                underlayButtons.add(new NoteItemTouchHelperCallback.UnderlayButton(
+                        AppCompatResources.getDrawable(
+                                NotesActivity.this,
+                                R.drawable.trash_can_enable
+                        ),
+                        Color.parseColor("#FF0000"),
+                        new NoteItemTouchHelperCallback.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                databaseHandler.deleteNote(listNotePin.get(pos).getIdNote());
+                                getListNote(listNotePin, listNote);
+                                notesAdapterPin.notifyDataSetChanged();
+                            }
+                        }
+                ));
+
+                underlayButtons.add(new NoteItemTouchHelperCallback.UnderlayButton(
+                        AppCompatResources.getDrawable(
+                                NotesActivity.this,
+                                R.drawable.editing
+                        ),
+                        Color.parseColor("#56BC93"),
+                        new NoteItemTouchHelperCallback.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                onCLickEditName(listNotePin.get(pos).getIdNote(), notesAdapterPin);
+                            }
+                        }
+                ));
+                underlayButtonsRight.add(new NoteItemTouchHelperCallback.UnderlayButton(
+                        AppCompatResources.getDrawable(
+                                NotesActivity.this,
+                                R.drawable.unpin_enable
+                        ),
+                        Color.parseColor("#FFC74A"),
+                        new NoteItemTouchHelperCallback.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int pos) {
+                                databaseHandler.updateIsPinNote(listNotePin.get(pos).getIdNote(), false);
+                                getListNote(listNotePin, listNote);
+                                notesAdapterPin.notifyDataSetChanged();
+                                notesAdapter.notifyDataSetChanged();
+                            }
+                        }
+                ));
+            }
+
+        };
+        ItemTouchHelper touchHelper2 = new ItemTouchHelper(callback2);
         rcvNotesPin.setAdapter(notesAdapterPin);
-        
+        touchHelper2.attachToRecyclerView(rcvNotesPin);
+
     }
+
+    private void onCLickEditName(int id, NotesAdapter adapter) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.layout_editnamenote);
+        Window window = dialog.getWindow();
+        if (window == null) {
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttribute = window.getAttributes();
+        windowAttribute.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttribute);
+
+        TextView save = dialog.findViewById(R.id.tv_saveeditname);
+        TextView destroy = dialog.findViewById(R.id.tv_destroyeditname);
+        EditText editText = dialog.findViewById(R.id.edtnamelayouteditname);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    int color = Color.parseColor("#81A34D");
+                    save.setEnabled(true);
+                    save.setTextColor(color);
+                } else {
+                    int color = Color.parseColor("#A5A5A5");
+                    save.setEnabled(false);
+                    save.setTextColor(color);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        destroy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                databaseHandler.updateChangeName(id, editText.getText().toString());
+                getListNote(listNotePin, listNote);
+                adapter.notifyDataSetChanged();
+                dialog.dismiss();
+
+            }
+        });
+        dialog.show();
+
+    }
+
 
     private void setBundleNote(Note note) {
         Bundle bundle = new Bundle();
@@ -239,21 +413,22 @@ public class NotesActivity extends AppCompatActivity {
         intent.putExtras(bundle);
         startActivity(intent);
     }
+
     private void getListNote(List<Note> list1, List<Note> list2) {
         list1.clear();
         list2.clear();
 
         List<Note> list = new ArrayList<>();
-        if(folder == null){
+        if (folder == null) {
             list = databaseHandler.getAllNote();
-        }else{
+        } else {
             list = databaseHandler.getNotesInFolder(folder.getIdFolder());
         }
-        for(int i = 0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             Note note = list.get(i);
-            if(note.isPin()){
+            if (note.isPin()) {
                 list1.add(note);
-            }else {
+            } else {
                 list2.add(note);
             }
         }
@@ -262,10 +437,10 @@ public class NotesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-            List<Note> list1 =  new ArrayList<>();
-            List<Note> list2 =  new ArrayList<>();
-            getListNote(list1, list2);
-            notesAdapter.updateData(list2);
-            notesAdapterPin.updateData(list1);
+        List<Note> list1 = new ArrayList<>();
+        List<Note> list2 = new ArrayList<>();
+        getListNote(list1, list2);
+        notesAdapter.updateData(list2);
+        notesAdapterPin.updateData(list1);
     }
 }
