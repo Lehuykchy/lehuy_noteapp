@@ -301,7 +301,7 @@ public abstract class NoteItemTouchHelperCallback extends ItemTouchHelper.Simple
             canvas.drawPath(buttonPath, buttonPaint);
 
             if (!animate) {
-                int targetSize = 70; // Kích thước mong muốn (32px)
+                int targetSize = 60; // Kích thước mong muốn (32px)
                 if (imageResId != null) {
                     // Đặt kích thước mới cho ảnh
                     int newWidth = targetSize;

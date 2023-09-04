@@ -24,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,12 +41,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NotesActivity extends AppCompatActivity {
-    private RecyclerView recyclerView, rcvNotesPin;
-    private NotesAdapter notesAdapter, notesAdapterPin;
+    private RecyclerView recyclerView, rcvNotesPin, rcvSearch;
+    private NotesAdapter notesAdapter, notesAdapterPin, noteAdpaterSearch;
     private DatabaseHandler databaseHandler;
-    private List<Note> listNote, listNotePin;
+    private List<Note> listNote, listNotePin, listNoteSearch, listAllNoteSearch;
     private Folder folder = null;
-    private LinearLayout lnExit, lnPinRcv;
+    private LinearLayout lnExit, lnPinRcv, lnSearch;
+    private SearchView searchView;
     private TextView tvNameFolderNote, tvRcvNameFolderNotes;
     private ImageView imgCreateNoteFolder, imgRltPinRcv;
     private Animation animation;
@@ -67,6 +69,61 @@ public class NotesActivity extends AppCompatActivity {
             }
         });
         setOnClickRltPinRcv();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(query.length()>0){
+                    performSearch(query);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.length()==0){
+                    rcvSearch.setVisibility(View.GONE);
+                    lnSearch.setVisibility(View.VISIBLE);
+                }else {
+                    performSearch(newText);
+                }
+                return true;
+            }
+        });
+    }
+
+    private void performSearch(String text) {
+        listNoteSearch = new ArrayList<>();
+        for (int i = 0; i < listAllNoteSearch.size(); i++) {
+            if (listAllNoteSearch.get(i).getName().toUpperCase().contains(text.toUpperCase())) {
+                listNoteSearch.add(listAllNoteSearch.get(i));
+            }
+        }
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(NotesActivity.this);
+        rcvSearch.setLayoutManager(linearLayoutManager);
+
+        noteAdpaterSearch = new NotesAdapter(listNoteSearch, NotesActivity.this, new NotesAdapter.IClickListenerNote() {
+            @Override
+            public void onClickItemNote(int position) {
+                Note note = noteAdpaterSearch.GetNoteByPosition(position);
+                Bundle bundle = new Bundle();
+                bundle.putInt("idnote", note.getIdNote());
+                bundle.putInt("idnotefolder", note.getIdFolder());
+                bundle.putString("namenotes", note.getName());
+                bundle.putString("notecontext", note.getContext());
+                bundle.putString("notepassword", note.getPassword());
+                bundle.putString("notedate", note.getDate());
+                bundle.putBoolean("noteispin", note.isPin());
+                bundle.putBoolean("noteislock", note.isLock());
+
+                Intent intent = new Intent(NotesActivity.this, CreateNoteActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        rcvSearch.setAdapter(noteAdpaterSearch);
+        rcvSearch.setVisibility(View.VISIBLE);
+        lnSearch.setVisibility(View.GONE);
     }
 
     private void setOnClickRltPinRcv() {
@@ -148,6 +205,9 @@ public class NotesActivity extends AppCompatActivity {
         rltPinRcv = findViewById(R.id.rltpinrcv);
         imgRltPinRcv = findViewById(R.id.img_rltpinrcv);
         tvRcvNameFolderNotes = findViewById(R.id.tv_rcvnamefoldernotes);
+        searchView = findViewById(R.id.searchviewnoteactivity);
+        lnSearch = findViewById(R.id.lnmainabcd);
+        rcvSearch = findViewById(R.id.rcvsearchviewnoteactivity);
 
         animation = new AlphaAnimation(1f, 0.5f);
         animation.setDuration(200);
@@ -169,12 +229,10 @@ public class NotesActivity extends AppCompatActivity {
 
         listNote = new ArrayList<>();
         listNotePin = new ArrayList<>();
+        listAllNoteSearch = new ArrayList<>();
+        listAllNoteSearch.addAll(databaseHandler.getAllNote());
         getListNote(listNotePin, listNote);
 
-
-        if (listNote.size() == 0) {
-            tvRcvNameFolderNotes.setVisibility(View.GONE);
-        }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         if (folder != null) {
@@ -255,9 +313,6 @@ public class NotesActivity extends AppCompatActivity {
 //ListNotePin
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this);
         rcvNotesPin.setLayoutManager(linearLayoutManager1);
-        if (listNotePin.size() > 0) {
-            lnPinRcv.setVisibility(View.VISIBLE);
-        }
         if (folder != null) {
             notesAdapterPin = new NotesAdapter(listNotePin, this, folder, new NotesAdapter.IClickListenerNote() {
                 @Override
@@ -432,6 +487,16 @@ public class NotesActivity extends AppCompatActivity {
                 list2.add(note);
             }
         }
+        if (listNote.size() == 0) {
+            tvRcvNameFolderNotes.setVisibility(View.GONE);
+        }else {
+            tvRcvNameFolderNotes.setVisibility(View.VISIBLE);
+        }
+        if (listNotePin.size() == 0) {
+            lnPinRcv.setVisibility(View.GONE);
+        }else {
+            lnPinRcv.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -442,5 +507,14 @@ public class NotesActivity extends AppCompatActivity {
         getListNote(list1, list2);
         notesAdapter.updateData(list2);
         notesAdapterPin.updateData(list1);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!searchView.isIconified()){
+            searchView.setIconified(true);
+            return;
+        }
+        super.onBackPressed();
     }
 }

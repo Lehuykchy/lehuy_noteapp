@@ -109,6 +109,39 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return folders;
     }
 
+    public void deleteFolder(int id){
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            // Thực hiện xóa dữ liệu dựa trên điều kiện
+            String whereClause = KEY_IDFOLDER + " = ?";
+            String[] whereArgs = {String.valueOf(id)};
+            db.delete(TABLE_NAMEFOLDER, whereClause, whereArgs);
+
+            db.close();
+        }catch (SQLiteException e) {
+            Log.d("database", e.toString());
+        }
+    }
+
+    public void updateChangeNameFolder(int id, String name){
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_NAMEFOLDER, name);
+
+            String whereClause = KEY_IDFOLDER + " = ?";
+            String[] whereArgs = {String.valueOf(id)};
+
+            db.update(TABLE_NAMEFOLDER, values, whereClause, whereArgs);
+            Log.i("database", "update  tên note thành công" );
+            db.close();
+        }catch (SQLiteException e) {
+            Log.d("database", e.toString());
+        }
+    }
+
     public long addNote(Note note) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();

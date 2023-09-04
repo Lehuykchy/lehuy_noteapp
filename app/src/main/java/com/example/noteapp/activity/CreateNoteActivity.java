@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.renderscript.Sampler;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -79,27 +80,22 @@ public class CreateNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView((R.layout.activity_createnote));
         initUI();
-        mEditor.setEditorHeight(200);
         mEditor.setEditorFontSize(22);
         mEditor.setEditorFontColor(Color.BLACK);
+        mEditor.setEditorHeight(700);
         //mEditor.setEditorBackgroundColor(Color.BLUE);
-        //mEditor.setBackgroundColor(Color.BLUE);
-        //mEditor.setBackgroundResource(R.drawable.bg);
-        mEditor.setPadding(10, 10, 10, 10);
-        //mEditor.setBackground("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg");
-        mEditor.setPlaceholder("Insert text here...");
         //mEditor.setInputEnabled(false);
 
-        mPreview = (TextView) findViewById(R.id.preview);
+//        mPreview = (TextView) findViewById(R.id.preview);
         if (note != null) {
             mEditor.setHtml(note.getContext());
         }
-        mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
-            @Override
-            public void onTextChange(String text) {
-                mPreview.setText(mEditor.getHtml());
-            }
-        });
+//        mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
+//            @Override
+//            public void onTextChange(String text) {
+//                mPreview.setText(mEditor.getHtml());
+//            }
+//        });
 
         setClickImgLockNote();
         setOnClickImgBold();
@@ -486,7 +482,10 @@ public class CreateNoteActivity extends AppCompatActivity {
             int idFolder = receivedBundle.getInt("idfolder", 0);
             String nameFolder = receivedBundle.getString("namefolder", null);
             nameNote = receivedBundle.getString("namenote", null);
-            folder = new Folder(idFolder, nameFolder);
+            if(idFolder != 0){
+                folder = new Folder(idFolder, nameFolder);
+            }
+
 
             int idNote = receivedBundle.getInt("idnote", 0);
             int idNoteFolder = receivedBundle.getInt("idnotefolder", 0);

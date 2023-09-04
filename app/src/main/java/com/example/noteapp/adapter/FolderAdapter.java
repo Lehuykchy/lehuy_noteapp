@@ -15,8 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.noteapp.R;
+import com.example.noteapp.model.DatabaseHandler;
 import com.example.noteapp.model.Folder;
+import com.example.noteapp.model.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderViewHolder>{
@@ -24,6 +27,7 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
     private Context context;
     private IClickListenerFolder iClickListenerFolder;
     private Animation fadeAnimation;
+    private DatabaseHandler databaseHandler;
 
     public interface IClickListenerFolder{
         void onClickItemFolder(int position);
@@ -33,6 +37,7 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
         this.listFolder = listFolder;
         this.context = context;
         this.iClickListenerFolder = iClickListenerFolder;
+        databaseHandler = new DatabaseHandler(context, "dbnoteapp", null, 1);
     }
 
 
@@ -52,6 +57,7 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
         if(folder == null){
             return;
         }
+        List<Note> list= new ArrayList<>();
         fadeAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_animation);
         holder.itemFolderName.setText(folder.getNameFolder());
 
@@ -63,6 +69,9 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
                 iClickListenerFolder.onClickItemFolder(position);
             }
         });
+
+        list.addAll(databaseHandler.getNotesInFolder(folder.getIdFolder()));
+        holder.tvCount.setText(String.valueOf(list.size()));
 
     }
 
@@ -77,11 +86,13 @@ public class FolderAdapter  extends RecyclerView.Adapter<FolderAdapter.FolderVie
     public class FolderViewHolder extends RecyclerView.ViewHolder{
         private TextView itemFolderName;
         private RelativeLayout relativeLayout;
+        private TextView tvCount;
 
         public FolderViewHolder(@NonNull View itemView) {
             super(itemView);
             itemFolderName = itemView.findViewById(R.id.tvitemnamefolder);
             relativeLayout = itemView.findViewById(R.id.relativeloutfolderall);
+            tvCount = itemView.findViewById(R.id.tvitemcountfolder);
         }
     }
     public Folder GetFolderByPosition(int position) {
