@@ -118,6 +118,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             String[] whereArgs = {String.valueOf(id)};
             db.delete(TABLE_NAMEFOLDER, whereClause, whereArgs);
 
+            String whereClause1 =COLUMN_FOLDER_ID + " = ?";
+            String[] whereArgs1 = {String.valueOf(id)};
+            db.delete(TABLE_NOTES, whereClause1, whereArgs1);
+
             db.close();
         }catch (SQLiteException e) {
             Log.d("database", e.toString());

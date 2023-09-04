@@ -90,6 +90,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             holder.tvNameNote.setText(note.getName());
         }else{
             holder.tvNameNote.setText(note.getName());
+            holder.tvNameNote.setTextColor(Color.BLACK);
         }
 
         if(position == listNotes.size() -1){

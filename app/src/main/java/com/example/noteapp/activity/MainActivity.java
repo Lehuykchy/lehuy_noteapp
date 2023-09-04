@@ -221,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         window.setAttributes(windowAttribute);
 
         TextView save = dialog.findViewById(R.id.tv_savecreatefolder);
+        TextView textView = dialog.findViewById(R.id.tvnamelayoutcreate);
         TextView destroy = dialog.findViewById(R.id.tv_destroycreatefolder);
         EditText editText = dialog.findViewById(R.id.edtnamelayoutcreate);
 
@@ -274,7 +275,8 @@ public class MainActivity extends AppCompatActivity {
                     folderAdapter.notifyDataSetChanged();
                     dialog.dismiss();
                 }else {
-                    Toast.makeText(MainActivity.this, "Không được trùng tên", Toast.LENGTH_SHORT).show();
+                    textView.setText("Thư mục bị trùng tên");
+                    textView.setTextColor(Color.RED);
                 }
 
             }
@@ -331,6 +333,7 @@ public class MainActivity extends AppCompatActivity {
                                 databaseHandler.deleteFolder(listFolder.get(pos).getIdFolder());
                                 getListFolder();
                                 folderAdapter.notifyDataSetChanged();
+                                resetCount();
                             }
                         }
                 ));
@@ -446,9 +449,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void resetCount(){
         List<Note> listall = new ArrayList<>();
         List<Note> listghichu = new ArrayList<>();
         listall.addAll(databaseHandler.getAllNote());
@@ -460,6 +461,14 @@ public class MainActivity extends AppCompatActivity {
 
         tvCountNoteFolder.setText(String.valueOf(listall.size()));
         tvCountNoteFolderGhichu.setText(String.valueOf(listghichu.size()));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        resetCount();
+        getListFolder();
+        folderAdapter.notifyDataSetChanged();
     }
     public void onBackPressed() {
         if(!searchView.isIconified()){

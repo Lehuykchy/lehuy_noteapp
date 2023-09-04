@@ -82,8 +82,8 @@ public class CreateNoteActivity extends AppCompatActivity {
         initUI();
         mEditor.setEditorFontSize(22);
         mEditor.setEditorFontColor(Color.BLACK);
-        mEditor.setEditorHeight(700);
-        //mEditor.setEditorBackgroundColor(Color.BLUE);
+        mEditor.setEditorHeight(600);
+        mEditor.setPadding(10,10,10,10);
         //mEditor.setInputEnabled(false);
 
 //        mPreview = (TextView) findViewById(R.id.preview);
@@ -184,6 +184,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                 if (String.valueOf(editText.getText()).equals(note.getPassword())) {
                     lnLockCreateNote.setVisibility(View.GONE);
                     imgLockNote.setImageResource(R.drawable.unlocknote);
+                    imgMoreCreateNote.setVisibility(View.VISIBLE);
                     dialog.dismiss();
                 } else {
                     textView.setText("Mật khẩu không đúng");
@@ -197,6 +198,9 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void setClickImgLockNote() {
+        if(isClickLock){
+            imgMoreCreateNote.setVisibility(View.GONE);
+        }
         imgLockNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,6 +210,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                     isClickLock = !isClickLock;
                     imgLockNote.setImageResource(R.drawable.locknote);
                     lnLockCreateNote.setVisibility(View.VISIBLE);
+                    imgMoreCreateNote.setVisibility(View.GONE);
                 }
             }
         });

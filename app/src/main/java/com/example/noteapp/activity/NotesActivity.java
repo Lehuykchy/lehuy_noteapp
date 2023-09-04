@@ -487,12 +487,12 @@ public class NotesActivity extends AppCompatActivity {
                 list2.add(note);
             }
         }
-        if (listNote.size() == 0) {
+        if (list2.size() == 0) {
             tvRcvNameFolderNotes.setVisibility(View.GONE);
         }else {
             tvRcvNameFolderNotes.setVisibility(View.VISIBLE);
         }
-        if (listNotePin.size() == 0) {
+        if (list1.size() == 0) {
             lnPinRcv.setVisibility(View.GONE);
         }else {
             lnPinRcv.setVisibility(View.VISIBLE);
